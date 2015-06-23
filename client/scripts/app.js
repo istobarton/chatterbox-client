@@ -136,8 +136,8 @@ var app = {
               var $compare = $($(".user")[j])
 
               if ($current.text() === $compare.text()) {
-                $current.css({'color':'blue'});
-                $compare.css({'color':'blue'});
+                $current.css({'color':'#E74C3C'});
+                $compare.css({'color':'#E74C3C'});
               }
             }
           }
@@ -165,10 +165,6 @@ var app = {
     $message.append($username)
     $message.append($text)
 
-    // $message.append($username + ": " + $text);
-
-    // $message.text(": " + obj['text']);
-
 
     $("#chats").append($message);
   },
@@ -189,27 +185,11 @@ var app = {
   },
 
   addFriend : function(username){
-    // console.log(this);
 
     var $friendList = $("<li></li>")
     $friendList.text(username);
     $(".friends").append($friendList);
-    // $(".friends").append("<li>" + username + "</li>");
   },
-
-  // colorFriend: function(name){
-
-  //   for (var item in app.friendStorage){
-  //     if (name === item){
-  //       for(var i = 0; i < $(".user").length); i++){
-  //         if()
-  //       }
-  //     }
-  //   }
-  // }
-
-  //             app.addFriend($(this).text());
-
 
   clearFriends : function(){
     $('.friends').empty();
