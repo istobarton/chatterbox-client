@@ -5,8 +5,15 @@ body {
     font-family: arial, sans-serif;
 }
 
+#roomSelect{
+    width: 300px;
+    float: right;
+    background-color: white;
+    height: 200px;
+}
+
 #main {
-    width: 500px;
+    width: 700px;
     margin: auto;
     text-align: left;
     background: white;
@@ -65,8 +72,13 @@ form input[type=text] {
     background-color: #eee;
 }
 
-.message .uzer {
+.message .user {
     font-weight: 800;
+}
+
+.user:hover{
+    font-size: 1.25em;
+    cursor: pointer;
 }
 
 .message:hover {
