@@ -14,11 +14,19 @@
     <script src="scripts/app.js"></script>
   </head>
   <body>
+    <div id="roomSelect" ></div>
     <div id="main">
       <h1>chatterbox</h1>
-      <div id='chatbox'>
-      </div>
+      <form>
+        <label>Enter message:</label><br>
+        <input type="text" id="message" name="text"><br>
+        <button type="button" name="submit" class="submit">Submit</button>
+        <button type="button" name="new" class="new">Fresh Messages</button>
+        <button type="button" name="clean" class="clean">Clean Slate</button>
+      </form>
       <!-- Your HTML goes here! -->
+      <div id="chats"></div>
     </div>
+
   </body>
 </html>
