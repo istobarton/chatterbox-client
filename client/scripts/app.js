@@ -1,12 +1,8 @@
 
-//Grab username
-var uzerString = window.location.search;
-var uzerArr = uzerString.split("=");
-var uzer = uzerArr[1];
-
-
-
 var app = {
+
+  //get username
+  uzer : window.location.search.split("=")[1],
 
   //friend storage
   friendStorage: {},
@@ -14,6 +10,9 @@ var app = {
   init : function(){
 
     $(document).ready(function() {
+
+      // var uzer =
+      // console.log(uzer);
 
       //fetches new messages
       app.fetch('https://api.parse.com/1/classes/chatterbox')
@@ -23,7 +22,7 @@ var app = {
 
       //button click events
       $(".submit").on("click", function(){
-        app.send($("form").serializeArray()[0]["value"]);
+        app.send($("form").serializeArray()[0]["value"], "THE BEST CHATROOM");
         $('form').find("input[type=text], textarea").val("");
       });
 
@@ -39,6 +38,7 @@ var app = {
         app.clearFriends();
       });
 
+
     })
 
 
@@ -51,7 +51,7 @@ var app = {
 
     //create message object
     var obj = {
-      username: uzer,
+      username: app.uzer,
       text: text,
       roomname: room
     };
@@ -73,52 +73,71 @@ var app = {
   },
 
   fetch : function(url){
-
+    //Initializing a get request
     $.ajax({
       url: url,
       type: 'GET',
       contentType: 'application/json',
+      //in the event of a sucessful GET request do the following:
       success: function (data) {
-        console.log(data)
-
+        //1. Initialize Storage & Make data accessible
         var storage = {};
         var arr = data['results'];
+        console.log(data)
 
-        //loop through results array
+        //2. Loop through results array, set storage keys to each roomname, set storage properties to empty arrays, push data to each respective roomname
         for (var i = 0; i < 50; i ++){
 
-          //stringify key
-          var key = i + '';
+          // add messages to main page
+          app.addMessage(arr[i]);
 
-          //check if a friend exists
-          if ((arr[key]["username"]) in app.friendStorage) {
-            //change color to blue
-            console.log(arr[key]["username"]);
-            $()
-          }
-          //add messages
-          app.addMessage(arr[key]);
-
-          //-----------------------
-
-          // console.log(arr[key]["roomname"]);
-          if (arr[key]["roomname"] === undefined || arr[key]["roomname"] === '') {
+          // initiate room keys in storage
+          if (arr[i]["roomname"] === undefined || arr[i]["roomname"] === '') {
             i++;
           } else {
+              // create readable variable for the roomname property
+              var currentRoomName = arr[i]["roomname"];
 
-            storage[arr[key]["roomname"]] = arr[key]["roomname"]
+              //if the Room Key exists, push the current message into the Room Key's Array
+              if (storage[currentRoomName]) {
+                storage[currentRoomName].push(arr[i]);
+
+              // else initiate array and push current message into Array as first property
+              } else {
+
+                storage[currentRoomName] = [];
+                storage[currentRoomName].push(arr[i]);
+
+              }
+
 
           }
-
-          // -----------------------
-
-
         };
 
-        //calls addRoom for each unique room
-        for (var item in storage){
-          app.addRoom(storage[item]);
+        // Use addRoom to add each room to the select HTML selector
+        for (var roomName in storage){
+          app.addRoom(roomName);
         }
+
+        //Listen for room change
+        $("select").on("change", function(){
+           var selectRoom = $(this).val()
+           console.log(storage);
+
+           // app.fetch('https://api.parse.com/1/classes/chatterbox')
+           app.clearMessages();
+
+
+           debugger
+           for (var m = 0; m < storage[selectRoom].length; m++) {
+             if (storage[selectRoom][m] === undefined) {
+               m++;
+             } else {
+               console.log(storage[selectRoom][m]);
+               app.addMessage(storage[selectRoom][m]);
+             }
+           }
+        });
 
 
         //friend listener
@@ -152,21 +171,23 @@ var app = {
   },
 
   addMessage : function(obj){
+    // if(obj['roomname']===selectRoom){
+      // console.log("It should be obvious if I'm working")
+      var $message = $("<div class='message'></div>");
 
-    var $message = $("<div class='message'></div>");
+      var $username = $("<span class='user'></span>");
+      $username.text(obj["username"]);
 
-    var $username = $("<span class='user'></span>");
-    $username.text(obj["username"]);
-
-    var $text = $("<span></span>")
-    $text.text(": " + obj["text"]);
-
-
-    $message.append($username)
-    $message.append($text)
+      var $text = $("<span></span>")
+      $text.text(": " + obj["text"]);
 
 
-    $("#chats").append($message);
+      $message.append($username)
+      $message.append($text)
+
+
+      $("#chats").append($message);
+   // }
   },
 
   clearMessages : function(){
@@ -175,13 +196,13 @@ var app = {
 
   addRoom : function(roomName){
     //sanitize
-    var $roomList = $("<li></li>");
+    var $roomList = $("<option></option>");
     $roomList.text(roomName);
-    $(".rooms").append($roomList);
+    $("#roomSelect").append($roomList);
   },
 
   clearRooms: function(){
-    $('.rooms').empty();
+    $('#roomSelect').empty();
   },
 
   addFriend : function(username){
